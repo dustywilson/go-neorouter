@@ -1,0 +1,38 @@
+NeoRouter API in Go
+===================
+
+This code presently allows for interaction with the NeoRouter Linux client.
+
+It can be expanded (by you, if you'd like) to do more things.  Currently
+all it does it return a list of computers on your domain.
+
+
+1) Install this by using:
+
+    goinstall github.com/dustywilson/go-neorouter
+
+
+2) Code something like this:
+
+    import (
+      "os"
+      "fmt"
+      "github.com/dustywilson/go-neorouter"
+    )
+    
+    func main() {
+      list, err := neorouter.GetList("neorouterdomain", "username", "password")
+      if err != nil {
+        fmt.Printf("Some error occurred: %s\n", err)
+        os.Exit(1)
+       }
+       for i := range list.Computers {
+         computer := list.Computers[i]
+         online := "OFFLINE"
+         if computer.IsOnline {
+           online = "ONLINE"
+          }
+          fmt.Printf("Group:\t%s\nName:\t%s\nIP:\t%s\nOnline:\t%s\n\n", computer.Group, computer.Name, computer.Ip, online)
+        }
+      }
+    }
