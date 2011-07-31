@@ -21,6 +21,8 @@ a list of computers on your domain.
 
 2) Code something like this:
 
+    package main
+
     import (
       "os"
       "fmt"
@@ -32,15 +34,14 @@ a list of computers on your domain.
       if err != nil {
         fmt.Printf("Some error occurred: %s\n", err)
         os.Exit(1)
-       }
-       for i := range list.Computers {
-         computer := list.Computers[i]
-         online := "OFFLINE"
-         if computer.IsOnline {
-           online = computer.Ip
-          }
-          fmt.Printf("Group:\t%s\nName:\t%s\nStatus:\t%s\n\n",
-            computer.Group, computer.Name, online)
+      }
+      for i := range list.Computers {
+        computer := list.Computers[i]
+        online := "OFFLINE"
+        if computer.IsOnline {
+          online = computer.Ip
         }
+        fmt.Printf("Group:\t%s\nName:\t%s\nStatus:\t%s\n\n",
+          computer.Group, computer.Name, online)
       }
     }
