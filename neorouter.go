@@ -2,6 +2,7 @@ package neorouter
 
 
 import (
+	"os"
 	"fmt"
 	"exec"
 	"bufio"
@@ -21,7 +22,7 @@ type Computer struct {
 }
 
 
-func GetList(domain, username, password string) (list List) {
+func GetList(domain, username, password string) (list List, err os.Error) {
 	cmd := exec.Command("/usr/bin/nrclientcmd", "-p", password)
 	cmdStdin, _ := cmd.StdinPipe()   // in  = into process from me
 	cmdStdout, _ := cmd.StdoutPipe() // out = out from process to me
@@ -31,6 +32,7 @@ func GetList(domain, username, password string) (list List) {
 	reGroupname := regexp.MustCompile("> +([0-9A-Za-z]+)")
 	reComputerOffline := regexp.MustCompile("\\(offline\\) +([0-9A-Za-z ]+)")
 	reComputerOnline := regexp.MustCompile("([0-9\\.]+) +([0-9A-Za-z ]+)")
+	reBadLogin := regexp.MustCompile("The system could not sign you in")
 	cmd.Start()
 	for {
 		line, _ := reader.ReadString(':')
@@ -49,7 +51,10 @@ func GetList(domain, username, password string) (list List) {
 		if err != nil { // probably EOF which is okay
 			break
 		}
-		if match := reGroupname.FindStringSubmatch(string(line)); match != nil {
+		if reBadLogin.Match(line) {
+			return list, os.NewError("Login Failed")
+			break
+		} else if match := reGroupname.FindStringSubmatch(string(line)); match != nil {
 			groupname = match[1]
 		} else if match := reComputerOffline.FindStringSubmatch(string(line)); match != nil {
 			computername := match[1]
@@ -64,5 +69,5 @@ func GetList(domain, username, password string) (list List) {
 		cmdStdin.Write([]byte("quit\n"))
 	}
 	cmd.Process.Kill()
-	return list
+	return list, nil
 }
