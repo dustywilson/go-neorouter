@@ -30,8 +30,8 @@ func GetList(domain, username, password string) (list List, err os.Error) {
 	reDomain := regexp.MustCompile("Domain:")
 	reUsername := regexp.MustCompile("Username:")
 	reGroupname := regexp.MustCompile("> +([0-9A-Za-z]+)")
-	reComputerOffline := regexp.MustCompile("\\(offline\\) +([0-9A-Za-z ]+)")
-	reComputerOnline := regexp.MustCompile("([0-9\\.]+) +([0-9A-Za-z ]+)")
+	reComputerOffline := regexp.MustCompile("\\(offline\\) +(.+)")
+	reComputerOnline := regexp.MustCompile("([0-9\\.]+) +(.+)")
 	reBadLogin := regexp.MustCompile("The system could not sign you in")
 	cmd.Start()
 	for {
